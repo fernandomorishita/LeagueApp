@@ -1,0 +1,34 @@
+<%- include('partials/header') %>
+<div>
+  <h1>League of Losers current status</h1>
+    </br>
+  <table class="table table-bordered table-striped">
+      <thead>
+        <th>Summoner</th>
+        <th>Level</th>
+        <th>Rank</th>
+        <th>Ranked LP</th>
+        <th>KDA Ratio</th>
+        <th>Kills</th>
+        <th>Deaths</th>
+        <th>Assists</th>
+        <th>Avatar</th>
+      </tr>
+      </thead>
+  <tr>
+  <% list.forEach((summoner)=> { %>
+  <tr>
+    <td><%= summoner.name %></td>
+    <td><%= summoner.level %></td>
+    <td><%= summoner.rank %></td>
+    <td><%= summoner.rankedLP %></td>
+    <td><%= summoner.KDARatio %></td>
+    <td><%= summoner.KDA.kills %></td>
+    <td><%= summoner.KDA.deaths %></td>
+    <td><%= summoner.KDA.assists %></td>
+    <td><img class="avatar" src="<%= summoner.avatarURL %>"/></td>
+  </tr>
+  <% }) %>
+</table>
+</div>
+<%- include('partials/footer') %>
