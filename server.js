@@ -17,15 +17,19 @@ refreshStats = true;
 app.get('/', async (req, res) => {
   let sumList = [];
   // async/await does not work as expected with forEach().
-  for (let summoner of summoners) {
-    let summonerStat = await opgg.getStats(summoner, {
-      region: 'br',
-      refresh: refreshStats,
-    });
-    sumList.push(summonerStat);
-  }
+  try {
+    for (let summoner of summoners) {
+      let summonerStat = await opgg.getStats(summoner, {
+        region: 'br',
+        refresh: refreshStats,
+      });
+      sumList.push(summonerStat);
+    }
 
-  res.render('list', { list: sumList });
+    res.render('list', { list: sumList });
+  } catch (error) {
+    res.status(400).send('Bad Request');
+  }
 });
 
 function async() {}
