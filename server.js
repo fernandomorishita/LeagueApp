@@ -29,11 +29,10 @@ app.get('/', async (req, res) => {
     res.render('list', { list: sumList });
   } catch (error) {
     console.log(error);
-    res.status(400).send('Bad Request');
+    res.status(400).send(error);
   }
 });
 
-function async() {}
 // Look for environment variable 'PORT' (for Heroku), else use defined port.
 const PORT = process.env.PORT || 5000;
 
