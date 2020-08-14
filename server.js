@@ -12,7 +12,7 @@ app.use(express.static('public'));
 let sumStats = {};
 
 summoners = ['Gabszao', 'Rusbrus', 'Hevnie'];
-refreshStats = false;
+refreshStats = true;
 
 app.get('/', async (req, res) => {
   let sumList = [];
