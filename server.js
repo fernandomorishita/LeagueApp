@@ -28,6 +28,7 @@ app.get('/', async (req, res) => {
 
     res.render('list', { list: sumList });
   } catch (error) {
+    console.log(error);
     res.status(400).send('Bad Request');
   }
 });
