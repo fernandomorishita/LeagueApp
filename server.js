@@ -14,8 +14,9 @@ app.use(express.json({ extended: false }));
 app.use(express.static('public'));
 
 /*
-NOTE:
+DEV NOTES:
 For simplicity, the main structure of the App is here.
+API_KEY is used as environment variable through 'dotenv'.
 */
 
 app.get('/', async (req, res) => {
