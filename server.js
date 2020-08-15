@@ -13,18 +13,22 @@ app.set('view engine', 'ejs');
 app.use(express.json({ extended: false }));
 app.use(express.static('public'));
 
-const refreshStats = false;
+/*
+NOTE:
+For simplicity, the main structure of the App is here.
+*/
 
 app.get('/', async (req, res) => {
   let summonerArray = [];
   let idCounter = 0;
-  let soloQTier, soloQrank, soloQLP, soloQWins, soloQLosses;
-  let flexTier, flexrank, flexLP, flexWins, flexLosses;
   let soloQ, flex;
   let championList = await axios.get(config.get('champions'));
 
+  // 1 - Loop through all listed summoners.
   for (let summoner of summoners) {
     let isLiveMatch = 'No';
+
+    // 2 - Gather summoner data.
     try {
       // Read Summoner Header from API
       let {
@@ -67,6 +71,7 @@ app.get('/', async (req, res) => {
         accountId
       );
 
+      // Get live match if applicable
       try {
         let liveMatch = await getAPIData('liveMatchURL', id);
         isLiveMatch = 'LIVE';
@@ -80,6 +85,7 @@ app.get('/', async (req, res) => {
       flex.emblem = 'img/Emblem_' + _.capitalize(flex.tier) + '.png';
       let champIcon = config.get('championImg') + matchHistory.mostPlayed.img;
 
+      // Increment ID
       idCounter = idCounter + 1;
 
       let summonerStats = {
@@ -99,16 +105,20 @@ app.get('/', async (req, res) => {
       console.log(error);
     }
   }
+
+  // Send array to front-end
   res.render('list', { summoners: summonerArray });
 });
 
 async function getAPIData(iKindOfData, iID) {
+  // Main connection function to API
   const url = config.get(iKindOfData) + iID + '?api_key=' + process.env.API_KEY;
   let result = await axios.get(url);
   return result.data;
 }
 
 async function getSummonerMatchHistory(iChampionList, iSummonerAccountID) {
+  // Get data and analyse
   let summonerMatches = await getAPIData('summonerMatches', iSummonerAccountID);
   let count = 0;
   let champions = [];
@@ -164,6 +174,7 @@ function getChampionDataByID(iChampionList, iChampionID) {
     }
   }
 }
+
 // Look for environment variable 'PORT' (for Heroku), else use defined port.
 const PORT = process.env.PORT || 5000;
 
