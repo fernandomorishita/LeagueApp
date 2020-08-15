@@ -1,4 +1,10 @@
 {
   "summonerHeaderURL": "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-name/",
-  "summonerDetailURL": "https://br1.api.riotgames.com/lol/league/v4/entries/by-summoner/"
+  "summonerDetailURL": "https://br1.api.riotgames.com/lol/league/v4/entries/by-summoner/",
+  "liveMatchURL": "https://br1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/",
+  "summonerMatches": "https://br1.api.riotgames.com/lol/match/v4/matchlists/by-account/",
+  "match": "https://br1.api.riotgames.com/lol/match/v4/matches/",
+  "champions": "http://ddragon.leagueoflegends.com/cdn/10.16.1/data/en_US/champion.json",
+  "championImg": "http://ddragon.leagueoflegends.com/cdn/10.16.1/img/champion/",
+  "profileImg": "http://ddragon.leagueoflegends.com/cdn/10.16.1/img/profileicon/"
 }

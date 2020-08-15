@@ -1,3 +1,31 @@
+body {
+  background-color: #dbe3e5;
+}
+
+.title {
+  text-align: center;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
 .avatar {
-  width: 10%;
+  width: 80px;
+  margin-right: 20px;
+}
+
+.emblem {
+  width: 80px;
+}
+
+.champIcon {
+  width: 80px;
+}
+
+.live {
+  color: grey;
 }
