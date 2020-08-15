@@ -6,27 +6,25 @@
       <thead>
         <th>Summoner</th>
         <th>Level</th>
-        <th>Rank</th>
-        <th>Ranked LP</th>
-        <th>KDA Ratio</th>
-        <th>Kills</th>
-        <th>Deaths</th>
-        <th>Assists</th>
-        <th>Avatar</th>
+        <th>SoloQ Rank</th>
+        <th>SoloQ Wins</th>
+        <th>SoloQ Losses</th>
+        <th>Flex Rank</th>
+        <th>Flex Wins</th>
+        <th>Flex Losses</th>
       </tr>
       </thead>
   <tr>
-  <% list.forEach((summoner)=> { %>
+  <% summoners.forEach((summoner)=> { %>
   <tr>
     <td><%= summoner.name %></td>
     <td><%= summoner.level %></td>
-    <td><%= summoner.rank %></td>
-    <td><%= summoner.rankedLP %></td>
-    <td><%= summoner.KDARatio %></td>
-    <td><%= summoner.KDA.kills %></td>
-    <td><%= summoner.KDA.deaths %></td>
-    <td><%= summoner.KDA.assists %></td>
-    <td><img class="avatar" src="<%= summoner.avatarURL %>"/></td>
+    <td><%= summoner.soloQRank %></td>
+    <td><%= summoner.soloQWins %></td>
+    <td><%= summoner.soloQLosses %></td>
+    <td><%= summoner.flexRank %></td>
+    <td><%= summoner.flexWins %></td>
+    <td><%= summoner.flexLosses %></td>
   </tr>
   <% }) %>
 </table>

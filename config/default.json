@@ -1,0 +1,4 @@
+{
+  "summonerHeaderURL": "https://br1.api.riotgames.com/lol/summoner/v4/summoners/by-name/",
+  "summonerDetailURL": "https://br1.api.riotgames.com/lol/league/v4/entries/by-summoner/"
+}
