@@ -18,21 +18,22 @@
       </tr>
       </thead>
   <tr>
-  <% summoners.forEach((summoner)=> { %>
+  <% summoners.forEach((summoner, index)=> { %>
   <tr>
-    <td><img class="avatar" src="<%= summoner.icon %>"/><%= summoner.name %></td>
-    <td><%= summoner.level %></td>
-    <td><img class="emblem" src="<%= summoner.soloQ.emblem %>"/> </td>
-    <td><%= summoner.soloQ.tier %> <%= summoner.soloQ.rank %></td>
-    <td><%= summoner.soloQ.wins %></td>
-    <td><%= summoner.soloQ.losses %></td>
-    <td><img class="emblem" src="<%= summoner.flex.emblem %>"/> </td>
-    <td><%= summoner.flex.tier %> <%= summoner.flex.rank %></td>
-    <td><%= summoner.flex.wins %></td>
-    <td><%= summoner.flex.losses %></td>
-    <td><img class="champIcon" src="<%= summoner.mostPlayed %>" /></td>
-    <td><%= summoner.timesPlayed %> played</td>
-    <td id="live<%= summoner.id %>"><%= summoner.liveMatch %></td>
+    <% console.log(profiles[index]) %>
+    <td><img class="avatar" src="<%= summoner.profileIconUrl %>"/><%= summoner.name %></td>
+    <td><%= summoner.summonerLevel %></td>
+    <td><img class="emblem" src="<%= profiles[index].soloQ.emblem %>"/> </td>
+    <td><%= profiles[index].soloQ.tier %> <%= profiles[index].soloQ.rank %></td>
+    <td><%= profiles[index].soloQ.wins %></td>
+    <td><%= profiles[index].soloQ.losses %></td>
+    <td><img class="emblem" src="<%= profiles[index].flexQ.emblem %>"/> </td>
+    <td><%= profiles[index].flexQ.tier %> <%= profiles[index].flexQ.rank %></td>
+    <td><%= profiles[index].flexQ.wins %></td>
+    <td><%= profiles[index].flexQ.losses %></td>
+    <td><img class="champIcon" src="<%= profiles[index].mostPlayed.imgUrl %>" /></td>
+    <td><%= profiles[index].mostPlayed.timesPlayed %> played</td>
+    <td id="live<%= summoner.id %>"><%= summoner.live %></td>
   </tr>
   <% }) %>
 </table>
