@@ -1,3 +1,3 @@
-const summoners = ['Gabszao', 'Rusbrus', 'Hevnie'];
+const summoners = ['Gabszao', 'Rusbrus', 'Hevnie', 'Homemdosako', 'Lynx JNR'];
 
 module.exports = summoners;

@@ -8,14 +8,19 @@ body {
   margin-bottom: 10px;
 }
 
+.title-img {
+  width: 30%;
+}
+
 .subtitle {
   text-align: center;
   margin-bottom: 50px;
 }
 
 .avatar {
-  width: 80px;
-  margin-right: 20px;
+  width: 100px;
+  margin: 20px 0 20px 0;
+  /*margin-right: 20px;*/
 }
 
 .emblem {
@@ -28,4 +33,37 @@ body {
 
 .live {
   color: grey;
+}
+
+.sum-icon {
+  display: inline-block;
+  width: 50%;
+  height: auto;
+  max-height: 100px;
+  max-width: 100px;
+}
+
+.sum-name {
+  margin-top: 10px;
+}
+
+.champ-icon {
+  width: 20%;
+  height: auto;
+  margin-left: 20px;
+}
+
+.footer {
+  background-color: #dbe3e5;
+  width: 100%;
+  height: 50px;
+  text-align: center;
+}
+
+.footer-text {
+  margin: 10px 0px 10px 0px;
+}
+
+.card-header {
+  background-color: #dbe3e5;
 }

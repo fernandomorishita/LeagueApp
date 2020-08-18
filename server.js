@@ -5,7 +5,7 @@ require('dotenv').config();
 const axios = require('axios');
 const _ = require('lodash');
 const connectDB = require('./config/db');
-const summoners = require('./config/summoners');
+const summonersArray = require('./config/summoners');
 
 const Summoner = require('./models/Summoner');
 const Profile = require('./models/Profile');
@@ -27,41 +27,55 @@ app.use(express.static('public'));
 
 app.get('/', async (req, res) => {
   let profiles = [];
+  let summoners = [];
 
-  // Get all summoners
   try {
-    const summoners = await Summoner.find({});
+    // Get all summoners
+    summoners = await Summoner.find({});
     if (summoners.length == 0) {
       return res.status(400).json({ msg: 'No summoners found' });
     }
 
     for (let i = 0; i < summoners.length; i++) {
-      console.log(summoners[i].id);
+      // For each summoner, get the profile
       let profile = await Profile.findOne({ summoner: summoners[i].id });
+
+      // If profile does not exist, remove this summoner from array
+      if (!profile) {
+        summoners.splice(i, 1);
+        continue;
+      }
       profiles.push(profile);
-      let live = await getAPIData('liveMatchURL', summoners[i].riotId);
-      if (!_.isEmpty(live)) {
-        summoners[i].live = 'LIVE';
-      } else {
-        summoners[i].live = ' ';
+
+      // Get live match if applicable
+      try {
+        let liveMatch = await getAPIData('liveMatchURL', id);
+        summoners.live = 'LIVE';
+      } catch (error) {
+        summoners.live = ' ';
       }
     }
   } catch (error) {
     console.log(error.message);
   }
 
-  console.log(profiles);
   // Send array to front-end
   res.render('list', { summoners: summoners, profiles: profiles });
 });
 
 app.post('/', async (req, res) => {
+  // Get champions list json
   let championList = await axios.get(config.get('champions'));
-  const process = summoners.map((summoner) =>
+
+  // Execute 'createOrUpdateData' function to all summoners in parallel
+  const process = summonersArray.map((summoner) =>
     createOrUpdateData(summoner, championList.data.data)
   );
+
+  // Wait for all processes to give the response
   const results = await Promise.all(process);
 
+  // Redirect to front-end
   res.redirect('/');
 });
 
@@ -190,6 +204,7 @@ async function getMatchesAnalysis(iDbSummoner, iChampionList) {
   let totalHealArray = [];
   let goldEarnedArray = [];
   let totalMinionsKilledArray = [];
+  let neutralMinionsKilledArray = [];
   let wardsPlacedArray = [];
   let wardsKilledArray = [];
 
@@ -215,18 +230,17 @@ async function getMatchesAnalysis(iDbSummoner, iChampionList) {
   try {
     // Get last 100 matches for given summoner
     let matches = await getAPIData('summonerMatches', iDbSummoner.accountId);
+    let maxMatchInfo = 9;
 
     for (let i = 0; i < 99; i++) {
-      //championsArray.push(m.champion);
-
-      //let matchInfo = await getAPIData('match', m.gameId);
-      //let participantId = getParticipantId(iAccountId, matchInfo);
       championsArray.push(matches.matches[i].champion);
 
-      if (i <= 9) {
+      // To avoid too many requests, get the data from last 10 matches only
+      if (i <= maxMatchInfo) {
         let matchInfo = await getAPIData('match', matches.matches[i].gameId);
         let participantId = getParticipantId(iDbSummoner.riotId, matchInfo);
         let {
+          mapId,
           kills,
           deaths,
           assists,
@@ -237,10 +251,18 @@ async function getMatchesAnalysis(iDbSummoner, iChampionList) {
           totalHeal,
           goldEarned,
           totalMinionsKilled,
+          neutralMinionsKilled,
           wardsPlaced,
           wardsKilled,
         } = getParticipantMatchData(participantId, matchInfo);
 
+        // We want only SR matches
+        if (mapId !== 11) {
+          maxMatchInfo += 1;
+          continue;
+        }
+
+        // Check for nulls
         if (checkField(kills)) killsArray.push(kills);
         if (checkField(deaths)) deathsArray.push(deaths);
         if (checkField(assists)) assistsArray.push(assists);
@@ -258,6 +280,8 @@ async function getMatchesAnalysis(iDbSummoner, iChampionList) {
         if (checkField(goldEarned)) goldEarnedArray.push(goldEarned);
         if (checkField(totalMinionsKilled))
           totalMinionsKilledArray.push(totalMinionsKilled);
+        if (checkField(neutralMinionsKilled))
+          neutralMinionsKilledArray.push(neutralMinionsKilled);
         if (checkField(wardsPlaced)) wardsPlacedArray.push(wardsPlaced);
         if (checkField(wardsKilled)) wardsKilledArray.push(wardsKilled);
       }
@@ -272,17 +296,18 @@ async function getMatchesAnalysis(iDbSummoner, iChampionList) {
   // Get champion data
   champName = getChampionDataByID(iChampionList, champId);
 
+  // Calculation functions
   const arrSum = (arr) => arr.reduce((a, b) => a + b, 0);
-  const arrAvg = (arr) => arr.reduce((a, b) => a + b, 0) / arr.length;
+  const arrAvg = (arr) => arr.reduce((a, b) => a + b, 0) / 10;
 
-  tCS = arrSum(totalMinionsKilledArray);
+  tCS = arrSum(totalMinionsKilledArray.concat(neutralMinionsKilledArray));
   tGold = arrSum(goldEarnedArray);
   tDamageDealt = arrSum(totalDamageDealtToChampionsArray);
   tKills = arrSum(killsArray);
   tDeaths = arrSum(deathsArray);
   tAssists = arrSum(assistsArray);
   tWards = arrSum(wardsPlacedArray);
-  aCS = arrAvg(totalMinionsKilledArray);
+  aCS = arrAvg(totalMinionsKilledArray.concat(neutralMinionsKilledArray));
   aGold = arrAvg(goldEarnedArray);
   aDamageDealt = arrAvg(totalDamageDealtToChampionsArray);
   aKills = arrAvg(killsArray);
@@ -324,6 +349,7 @@ function checkField(iField) {
 
   return true;
 }
+
 function getParticipantId(iSummonerId, iMatchInfo) {
   for (p of iMatchInfo.participantIdentities) {
     if (p.player.summonerId == iSummonerId) {
@@ -338,6 +364,7 @@ function getParticipantMatchData(iParticipantId, iMatchInfo) {
   for (p of iMatchInfo.participants) {
     if (p.participantId == iParticipantId) {
       return {
+        mapId: iMatchInfo.mapId,
         kills: p.stats.kills,
         deaths: p.stats.deaths,
         assists: p.stats.assists,
@@ -348,6 +375,7 @@ function getParticipantMatchData(iParticipantId, iMatchInfo) {
         totalHeal: p.stats.totalHeal,
         goldEarned: p.stats.goldEarned,
         totalMinionsKilled: p.stats.totalMinionsKilled,
+        neutralMinionsKilled: p.stats.neutralMinionsKilled,
         wardsPlaced: p.stats.wardsPlaced,
         wardsKilled: p.stats.wardsKilled,
       };
@@ -360,30 +388,6 @@ async function getAPIData(iKindOfData, iID) {
   const url = config.get(iKindOfData) + iID + '?api_key=' + process.env.API_KEY;
   let result = await axios.get(url);
   return result.data;
-}
-
-async function getSummonerMatchHistory(iChampionList, iSummonerAccountID) {
-  // Get data and analyse
-  let summonerMatches = await getAPIData('summonerMatches', iSummonerAccountID);
-  let count = 0;
-  let champions = [];
-  let roles = [];
-  let lanes = [];
-
-  summonerMatches.matches.forEach((match) => {
-    champions.push(match.champion);
-    roles.push(match.role);
-    lanes.push(match.lane);
-    count += 1;
-  });
-
-  // Get most played champion from champions array
-  let { champID, timesPlayed } = getMostPlayedChampion(champions);
-
-  // Get champion data
-  let championData = getChampionDataByID(iChampionList, champID);
-
-  return { mostPlayed: championData, timesPlayed: timesPlayed };
 }
 
 function getMostPlayedChampion(iChampionsArray) {

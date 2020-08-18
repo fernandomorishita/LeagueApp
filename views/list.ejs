@@ -1,41 +1,107 @@
 <%- include('partials/header') %>
+
+<!-- Title -->
 <div>
-  <h1 class="title">League of Losers</h1>
+  <div class="title">
+    <img class="title-img" src="img/league.svg" alt="">
   <h3 class="subtitle"> Who is the biggest loser of them all? </h3>
-    </br>
-  <table class="table table-bordered table-striped">
-      <thead class="thead-dark">
-        <th>Summoner</th>
-        <th>Level</th>
-        <th colspan="2">SoloQ</th>
-        <th>Wins</th>
-        <th>Losses</th>
-        <th colspan="2">Flex</th>
-        <th>Wins</th>
-        <th>Losses</th>
-        <th colspan="2">Most Played (last 100 matches)</th>
-        <th>Feeding?</th>
-      </tr>
-      </thead>
-  <tr>
-  <% summoners.forEach((summoner, index)=> { %>
-  <tr>
-    <% console.log(profiles[index]) %>
-    <td><img class="avatar" src="<%= summoner.profileIconUrl %>"/><%= summoner.name %></td>
-    <td><%= summoner.summonerLevel %></td>
-    <td><img class="emblem" src="<%= profiles[index].soloQ.emblem %>"/> </td>
-    <td><%= profiles[index].soloQ.tier %> <%= profiles[index].soloQ.rank %></td>
-    <td><%= profiles[index].soloQ.wins %></td>
-    <td><%= profiles[index].soloQ.losses %></td>
-    <td><img class="emblem" src="<%= profiles[index].flexQ.emblem %>"/> </td>
-    <td><%= profiles[index].flexQ.tier %> <%= profiles[index].flexQ.rank %></td>
-    <td><%= profiles[index].flexQ.wins %></td>
-    <td><%= profiles[index].flexQ.losses %></td>
-    <td><img class="champIcon" src="<%= profiles[index].mostPlayed.imgUrl %>" /></td>
-    <td><%= profiles[index].mostPlayed.timesPlayed %> played</td>
-    <td id="live<%= summoner.id %>"><%= summoner.live %></td>
-  </tr>
-  <% }) %>
-</table>
+  <form action="/" method="post">
+    <button class="btn btn-secondary" type="submit" name="button">Update</button>
+  </form>
+</div>
+</br>
+
+<!-- Album div -->
+<div class="album py-5 bg-light">
+  <div class="container">
+    <div class="row">
+
+      <!-- Summoners loop -->
+      <% summoners.forEach((summoner, index)=> { %>
+      <div class="col-md-4">
+        <div class="card mb-4 shadow-sm">
+
+          <!-- Card header -->
+          <div class="card-header text-center">
+            <img class="sum-icon rounded-circle" src="<%= summoner.profileIconUrl %>" alt="">
+            <img class="champ-icon rounded-circle" src="<%= profiles[index].mostPlayed.imgUrl %>" alt="">
+            <h4 class="sum-name text-center"><%= summoner.name %> <%= summoner.live %></h4>
+          </div>
+          <div class="card-body">
+
+            <!-- Card body -->
+            <div class="row">
+              <div class="col-sm text-center">
+                <h5 class="card-title">SoloQ</h5>
+                <img class="emblem" src="<%= profiles[index].soloQ.emblem %>" alt="">
+                <p><%= profiles[index].soloQ.tier %> <%= profiles[index].soloQ.rank %></p>
+                <p>Wins: <%= profiles[index].soloQ.wins %></p>
+                <p>Losses: <%= profiles[index].soloQ.losses %></p>
+                <p>LP: <%= profiles[index].soloQ.leaguePoints %></p>
+              </div>
+
+              <!-- Ranks -->
+              <div class="col-sm text-center">
+                <h5 class="card-title">FlexQ</h5>
+                <img class="emblem" src="<%= profiles[index].flexQ.emblem %>" alt="">
+                <p><%= profiles[index].flexQ.tier %> <%= profiles[index].flexQ.rank %></p>
+                <p>Wins: <%= profiles[index].flexQ.wins %></p>
+                <p>Losses: <%= profiles[index].flexQ.losses %></p>
+                <p>LP: <%= profiles[index].flexQ.leaguePoints %></p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alaysis start -->
+          <ul class="list-group">
+            <li class="list-group-item"><h6 class="text-center">Average per match (last 10 matches)</h6></li>
+          </ul>
+          <div class="card-body">
+            <table class="table table-hover">
+              <tr>
+                <td>KDA</td>
+                <td><%= profiles[index].kda %></td>
+              </tr>
+              <tr>
+                <td>Kills</td>
+                <td><%= profiles[index].aKills %></td>
+              </tr>
+              <tr>
+                <td>Deaths</td>
+                <td><%= profiles[index].aDeaths %></td>
+              </tr>
+              <tr>
+                <td>Assists</td>
+                <td><%= profiles[index].aAssists %></td>
+              </tr>
+              <tr>
+                <td>Wards</td>
+                <td><%= profiles[index].aWards %></td>
+              </tr>
+              <tr>
+                <td>Gold</td>
+                <td><%= profiles[index].aGold %></td>
+              </tr>
+              <tr>
+                <td>CS</td>
+                <td><%= profiles[index].aCS %></td>
+              </tr>
+              <tr>
+                <td>Damage Dealt</td>
+                <td><%= profiles[index].aDamageDealt %></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+  </div>
+</div>
+</div>
+<div class="footer">
+  <div class="footer-text">
+    3M Copyright 2020
+  </div>
 </div>
 <%- include('partials/footer') %>
